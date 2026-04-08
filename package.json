@@ -1,0 +1,20 @@
+{
+  "name": "claude-ui-library",
+  "version": "1.0.0",
+  "description": "Drip Capital Typography Design System — Web Component + CSS tokens",
+  "type": "module",
+  "main": "src/components/DripText.js",
+  "exports": {
+    ".": "./src/components/DripText.js",
+    "./tokens": "./src/tokens/typography.css"
+  },
+  "files": [
+    "src/",
+    "index.html"
+  ],
+  "keywords": ["drip-capital", "typography", "design-system", "web-components"],
+  "scripts": {
+    "dev": "npx serve . --listen 3000",
+    "preview": "npx serve . --listen 3000"
+  }
+}

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drip Capital — Typography Design System</title>
+
+  <!-- Design tokens -->
+  <link rel="stylesheet" href="./src/tokens/typography.css" />
+
+  <!-- Web component -->
+  <script type="module" src="./src/components/DripText.js"></script>
+
+  <style>
+    /* ── Page chrome ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Nunito Sans', sans-serif;
+      background: #f5f7fa;
+      color: var(--color-body-dark);
+    }
+
+    /* Hero banner */
+    .hero {
+      background: var(--color-wealthy-green-100);
+      padding: 40px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hero__title {
+      font-family: var(--font-family-primary);
+      font-size: 64px;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-noble-blue-500);
+      margin: 0;
+      line-height: 1;
+    }
+    .hero__logo {
+      font-family: var(--font-family-primary);
+      font-size: 32px;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-noble-blue-500);
+      letter-spacing: -1px;
+    }
+
+    /* Section wrapper */
+    .section {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 40px;
+    }
+
+    .section-title {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-h2-size);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-noble-blue-500);
+      border-bottom: 2px solid var(--color-wealthy-green-100);
+      padding-bottom: 12px;
+      margin-bottom: 32px;
+    }
+
+    /* Info banner */
+    .info-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid #6ba8ee;
+      border-radius: 6px;
+      padding: 10px 16px;
+      margin-bottom: 40px;
+    }
+    .info-banner span {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-body-small-size);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-noble-blue-500);
+    }
+
+    /* Type specimen table */
+    .type-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .type-table thead th {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-label-size);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-noble-blue-500);
+      text-align: left;
+      padding: 8px 12px;
+      background: var(--color-wealthy-green-100);
+    }
+    .type-table tbody tr {
+      border-bottom: 1px solid #e0e8f0;
+    }
+    .type-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    .type-table td {
+      padding: 14px 12px;
+      vertical-align: middle;
+    }
+    .meta {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-label-size);
+      color: var(--color-noble-blue-500);
+      white-space: nowrap;
+    }
+    .badge {
+      display: inline-block;
+      background: #eef4fc;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #3a6ea8;
+      margin-right: 4px;
+    }
+
+    /* Grid for dual-platform view */
+    .platform-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    @media (max-width: 768px) {
+      .platform-grid { grid-template-columns: 1fr; }
+    }
+
+    .platform-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(10,46,87,.12);
+      padding: 32px;
+    }
+    .platform-card__label {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-h3-size);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-noble-blue-500);
+      margin-bottom: 24px;
+    }
+
+    /* Code snippet preview */
+    .code-preview {
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 24px;
+      overflow-x: auto;
+    }
+    .code-preview pre {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+    .code-preview .attr  { color: #93c5fd; }
+    .code-preview .val   { color: #86efac; }
+    .code-preview .tag   { color: #f9a8d4; }
+    .code-preview .cmt   { color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <header class="hero">
+    <h1 class="hero__title">Typography</h1>
+    <div class="hero__logo">DRIP/c</div>
+  </header>
+
+  <!-- ── Introduction ─────────────────────────────────────────────────────── -->
+  <section class="section">
+    <h2 class="section-title">Introduction</h2>
+    <drip-text variant="body">
+      Nunito Sans is the primary typeface for Drip Capital. It evokes a contemporary,
+      clean and balanced visual identity. Along with being modern and minimalist in
+      appearance, the use of Bold and Regular from this font family provides
+      high-legibility.
+    </drip-text>
+  </section>
+
+  <!-- ── Heading Structure ─────────────────────────────────────────────────── -->
+  <section class="section">
+    <h2 class="section-title">Heading Structure</h2>
+
+    <drip-text variant="body">
+      To enhance our design language consistently across all digital products, our
+      curated font sizes range from 44px to 10px to establish harmonious visual hierarchy.
+    </drip-text>
+
+    <!-- Desktop scale -->
+    <div class="platform-grid" style="margin-top:40px">
+      <div class="platform-card">
+        <div class="platform-card__label">Desktop</div>
+
+        <table class="type-table">
+          <thead>
+            <tr>
+              <th>Style</th>
+              <th>Weight</th>
+              <th>Size</th>
+              <th>Specimen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="meta">Heading 1</td>
+              <td class="meta"><span class="badge">Bold</span></td>
+              <td class="meta">44px</td>
+              <td><drip-text variant="h1">The seamless trade platform</drip-text></td>
+            </tr>
+            <tr>
+              <td class="meta">Heading 2</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">32px</td>
+              <td>
+                <drip-text variant="h2" weight="regular">Solution to your</drip-text><br/>
+                <drip-text variant="h2" weight="bold">cashflow needs</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Heading 3</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">24px</td>
+              <td>
+                <drip-text variant="h3" weight="regular">Formulated to carry out</drip-text><br/>
+                <drip-text variant="h3" weight="bold">effortless global trade</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Heading 4</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">20px</td>
+              <td>
+                <drip-text variant="h4" weight="regular">For your business needs,</drip-text><br/>
+                <drip-text variant="h4" weight="bold">and secure transactions</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Caption</td>
+              <td class="meta"><span class="badge">Bold</span></td>
+              <td class="meta">18px</td>
+              <td><drip-text variant="caption">Developed with precision</drip-text></td>
+            </tr>
+            <tr>
+              <td class="meta">Body</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">16px</td>
+              <td>
+                <drip-text variant="body" weight="regular">Crafted as an epitome</drip-text><br/>
+                <drip-text variant="body" weight="bold">of clean aesthetic design</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Label</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">14px</td>
+              <td>
+                <drip-text variant="label" weight="regular">Utilized by Drip,</drip-text><br/>
+                <drip-text variant="label" weight="bold">assisted for you</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Body Small</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">12px</td>
+              <td>
+                <drip-text variant="body-small" weight="regular">Paper-less, swift</drip-text><br/>
+                <drip-text variant="body-small" weight="bold">and hassle free</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Validation</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">10px</td>
+              <td>
+                <drip-text variant="validation" weight="regular">to global trade finance</drip-text><br/>
+                <drip-text variant="validation" weight="bold">For an easy access</drip-text>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile scale -->
+      <div class="platform-card">
+        <div class="platform-card__label">Mobile</div>
+
+        <table class="type-table">
+          <thead>
+            <tr>
+              <th>Style</th>
+              <th>Weight</th>
+              <th>Size</th>
+              <th>Specimen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="meta">Heading 1</td>
+              <td class="meta"><span class="badge">Bold</span></td>
+              <td class="meta">32px</td>
+              <td><drip-text variant="h1">The seamless trade platform</drip-text></td>
+            </tr>
+            <tr>
+              <td class="meta">Heading 2</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">28px</td>
+              <td>
+                <drip-text variant="h2" weight="regular">Solution to your</drip-text><br/>
+                <drip-text variant="h2" weight="bold">cashflow needs</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Heading 3</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">22px</td>
+              <td>
+                <drip-text variant="h3" weight="regular">Formulated to carry out</drip-text><br/>
+                <drip-text variant="h3" weight="bold">effortless global trade</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Heading 4</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">20px</td>
+              <td>
+                <drip-text variant="h4" weight="regular">For your business needs</drip-text><br/>
+                <drip-text variant="h4" weight="bold">and secure transactions</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Caption</td>
+              <td class="meta"><span class="badge">Bold</span></td>
+              <td class="meta">18px</td>
+              <td><drip-text variant="caption">Developed with precision</drip-text></td>
+            </tr>
+            <tr>
+              <td class="meta">Body</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">16px</td>
+              <td>
+                <drip-text variant="body" weight="regular">Crafted as an epitome</drip-text><br/>
+                <drip-text variant="body" weight="bold">of clean aesthetic design</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Label</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">14px</td>
+              <td>
+                <drip-text variant="label" weight="regular">Utilized by Drip</drip-text><br/>
+                <drip-text variant="label" weight="bold">assisted for you</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Body Small</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">12px</td>
+              <td>
+                <drip-text variant="body-small" weight="regular">Paper-less, swift</drip-text><br/>
+                <drip-text variant="body-small" weight="bold">and hassle free</drip-text>
+              </td>
+            </tr>
+            <tr>
+              <td class="meta">Validation</td>
+              <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
+              <td class="meta">10px</td>
+              <td>
+                <drip-text variant="validation" weight="regular">to global trade finance</drip-text><br/>
+                <drip-text variant="validation" weight="bold">For an easy access</drip-text>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Usage / Code Snippets ─────────────────────────────────────────────── -->
+  <section class="section">
+    <h2 class="section-title">Usage Examples</h2>
+
+    <div class="info-banner">
+      <span>ℹ️  Load the component once, then use &lt;drip-text&gt; anywhere in your HTML.</span>
+    </div>
+
+    <div class="code-preview">
+      <pre><span class="cmt">&lt;!-- 1. Import the web component (once per page) --&gt;</span>
+<span class="tag">&lt;script</span> <span class="attr">type</span>=<span class="val">"module"</span> <span class="attr">src</span>=<span class="val">"./src/components/DripText.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- 2. Import design tokens (once per page) --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"./src/tokens/typography.css"</span> <span class="tag">/&gt;</span>
+
+<span class="cmt">&lt;!-- Desktop headings --&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"h1"</span><span class="tag">&gt;</span>The seamless trade platform<span class="tag">&lt;/drip-text&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"h2"</span> <span class="attr">weight</span>=<span class="val">"bold"</span><span class="tag">&gt;</span>cashflow needs<span class="tag">&lt;/drip-text&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"caption"</span><span class="tag">&gt;</span>Developed with precision<span class="tag">&lt;/drip-text&gt;</span>
+
+<span class="cmt">&lt;!-- Body &amp; utility --&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"body"</span><span class="tag">&gt;</span>Nunito Sans is the primary typeface for Drip Capital.<span class="tag">&lt;/drip-text&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"label"</span> <span class="attr">weight</span>=<span class="val">"bold"</span><span class="tag">&gt;</span>assisted for you<span class="tag">&lt;/drip-text&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"validation"</span><span class="tag">&gt;</span>to global trade finance<span class="tag">&lt;/drip-text&gt;</span>
+
+<span class="cmt">&lt;!-- Mobile scale (add the `mobile` attribute) --&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"h1"</span> <span class="attr">mobile</span><span class="tag">&gt;</span>The seamless trade platform<span class="tag">&lt;/drip-text&gt;</span>
+
+<span class="cmt">&lt;!-- Custom colour override --&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"h3"</span> <span class="attr">color</span>=<span class="val">"#1e7a4e"</span><span class="tag">&gt;</span>Custom colour<span class="tag">&lt;/drip-text&gt;</span>
+
+<span class="cmt">&lt;!-- Render as a different tag --&gt;</span>
+<span class="tag">&lt;drip-text</span> <span class="attr">variant</span>=<span class="val">"h2"</span> <span class="attr">as</span>=<span class="val">"span"</span><span class="tag">&gt;</span>Inline heading<span class="tag">&lt;/drip-text&gt;</span></pre>
+    </div>
+  </section>
+
+  <!-- ── Figma Code Connect note ───────────────────────────────────────────── -->
+  <section class="section">
+    <h2 class="section-title">Figma Code Connect</h2>
+    <div class="info-banner">
+      <span>📎  The file <code>src/figma/DripText.figma.js</code> maps this web component back to
+      the Figma typography node so designers see live code snippets in Dev Mode.</span>
+    </div>
+
+    <div class="code-preview">
+      <pre><span class="cmt">// src/figma/DripText.figma.js  (parserless Code Connect template)</span>
+<span class="cmt">// url=https://www.figma.com/design/blhIivaTore7fjGoFDU8gx/...?node-id=103-10896</span>
+<span class="cmt">// source=src/components/DripText.js</span>
+<span class="cmt">// component=drip-text</span>
+
+<span class="attr">const</span> figma  = <span class="val">require</span>(<span class="val">'figma'</span>)
+<span class="attr">const</span> instance = figma.selectedInstance
+
+<span class="attr">const</span> variant = instance.<span class="val">getEnum</span>(<span class="val">'Variant'</span>, { <span class="val">'Heading 1'</span>: <span class="val">'h1'</span>, ... })
+<span class="attr">const</span> weight  = instance.<span class="val">getEnum</span>(<span class="val">'Weight'</span>,  { <span class="val">'Regular'</span>: <span class="val">'regular'</span>, <span class="val">'Bold'</span>: <span class="val">'bold'</span> })
+
+<span class="attr">export default</span> {
+  example: figma.html<span class="val">`&lt;drip-text variant="${variant}" weight="${weight}"&gt;...&lt;/drip-text&gt;`</span>,
+  id: <span class="val">'drip-text'</span>,
+}</pre>
+    </div>
+  </section>
+
+  <footer style="text-align:center;padding:40px;color:#64748b;font-family:'Nunito Sans',sans-serif;font-size:12px;">
+    Drip Capital Typography Design System · Built from Figma node 103:10896
+  </footer>
+
+</body>
+</html>

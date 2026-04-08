@@ -1,0 +1,84 @@
+/**
+ * Drip Capital — Typography Design Tokens
+ * Source: Figma node 103:10896 (blhIivaTore7fjGoFDU8gx)
+ * Font Family: Nunito Sans
+ *
+ * Usage: import this file once at the root of your project.
+ * All tokens are exposed as CSS custom properties.
+ *
+ * Font sizes switch automatically at the 768px breakpoint —
+ * no `mobile` prop needed anywhere in markup.
+ */
+
+/* ─── Google Fonts import ──────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap');
+
+/* ── Base tokens (shared, non-responsive) ────────────────────────────────── */
+:root {
+  /* Font family */
+  --font-family-primary: 'Nunito Sans', sans-serif;
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+
+  /* Colours */
+  --color-noble-blue-500:    #0a2e57; /* headings + captions */
+  --color-body-dark:         #081c2b; /* body / label / small */
+  --color-wealthy-green-100: #cff5e6; /* page accent bg */
+  --color-white:             #ffffff;
+  --color-black:             #000000;
+
+  /* Line heights & colors (never change between breakpoints) */
+  --text-h1-line-height:         1;
+  --text-h1-color:               var(--color-noble-blue-500);
+
+  --text-h2-line-height:         1;
+  --text-h2-color:               var(--color-noble-blue-500);
+
+  --text-h3-line-height:         1;
+  --text-h3-color:               var(--color-noble-blue-500);
+
+  --text-h4-line-height:         1;
+  --text-h4-color:               var(--color-noble-blue-500);
+
+  --text-caption-line-height:    1;
+  --text-caption-color:          var(--color-noble-blue-500);
+
+  --text-body-line-height:       1;
+  --text-body-color:             var(--color-body-dark);
+
+  --text-label-line-height:      1;
+  --text-label-color:            var(--color-body-dark);
+
+  --text-body-small-line-height: 1;
+  --text-body-small-color:       var(--color-body-dark);
+
+  --text-validation-line-height: 1;
+  --text-validation-color:       var(--color-body-dark);
+}
+
+/* ── Desktop type scale (≥ 768px) ────────────────────────────────────────── */
+:root {
+  --text-h1-size:         44px; /* Bold */
+  --text-h2-size:         32px; /* Regular / Bold */
+  --text-h3-size:         24px; /* Regular / Bold */
+  --text-h4-size:         20px; /* Regular / Bold */
+  --text-caption-size:    18px; /* Bold */
+  --text-body-size:       16px; /* Regular / Bold */
+  --text-label-size:      14px; /* Regular / Bold */
+  --text-body-small-size: 12px; /* Regular / Bold */
+  --text-validation-size: 10px; /* Regular / Bold */
+}
+
+/* ── Mobile type scale (< 768px) ─────────────────────────────────────────── */
+/*    Only heading sizes differ; body/label/utility stay the same.           */
+@media (max-width: 767px) {
+  :root {
+    --text-h1-size:      32px; /* was 44px */
+    --text-h2-size:      28px; /* was 32px */
+    --text-h3-size:      22px; /* was 24px */
+    --text-h4-size:      20px; /* unchanged */
+    --text-caption-size: 18px; /* unchanged */
+  }
+}
