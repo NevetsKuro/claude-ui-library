@@ -1,0 +1,68 @@
+name: PR Reviewer Agent
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+jobs:
+  quality-check-and-review:
+    runs-on: ubuntu-latest
+    # Skip draft PRs
+    if: github.event.pull_request.draft == false
+
+    permissions:
+      contents: read
+      pull-requests: write   # required to post reviews and approve
+      issues: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so Claude can diff properly
+
+      - name: Run Claude PR Reviewer Agent
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # Allow the agent to approve or request changes via gh CLI
+          claude_args: '--allowed-tools Bash(gh pr review:*)'
+
+          prompt: |
+            You are a senior code reviewer for a Web Component UI library.
+            Review the changes in pull request #${{ github.event.pull_request.number }}
+            in the repository ${{ github.repository }}.
+
+            ## Quality checklist — evaluate every changed file against these rules:
+
+            ### Web Component conventions
+            - [ ] Custom element names use the `cl-` prefix and are kebab-case (e.g. `cl-button`, `cl-card`)
+            - [ ] Components extend `HTMLElement` (or a valid built-in)
+            - [ ] Shadow DOM is attached in `connectedCallback` with `{ mode: 'open' }`
+            - [ ] `observedAttributes` is a static getter returning an array of strings
+            - [ ] `attributeChangedCallback` re-renders or updates only what changed
+            - [ ] `customElements.define(...)` is called once per component file
+            - [ ] `<slot>` is used for content projection instead of hard-coded children
+
+            ### Code quality
+            - [ ] No inline event listeners that leak memory (use `addEventListener` + cleanup in `disconnectedCallback`)
+            - [ ] No direct `document.querySelector` calls inside component logic
+            - [ ] Styles are scoped inside the Shadow DOM — no global style pollution
+            - [ ] No console.log or debug statements left in production code
+            - [ ] Exported symbols are clearly named and intentional
+
+            ### General
+            - [ ] No introduced security issues (XSS via `innerHTML`, prototype pollution, etc.)
+            - [ ] No unnecessary dependencies added
+            - [ ] File and folder names follow the existing project structure
+
+            ## Decision rules
+            - If **all checklist items pass** (or are not applicable to the changed files):
+              Run: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --approve --body "Quality check passed. All Web Component conventions and code quality rules met."`
+
+            - If **any checklist item fails**:
+              Run: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --request-changes --body "<your detailed feedback listing each failed item and how to fix it>"`
+
+            Be specific and actionable in your feedback. Reference file names and line numbers where possible.
