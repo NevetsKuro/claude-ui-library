@@ -2,9 +2,6 @@
  * <drip-dropdown> — Drip Capital Dropdown Web Component
  * Source: Figma node 103:11076 (Dropdowns)
  *
- * A flexible dropdown menu component supporting single-select, multi-select,
- * and search functionality with full keyboard navigation.
- *
  * ── Attributes ────────────────────────────────────────────────────────────────
  * @attr {string}  label        — Field label shown above the dropdown
  * @attr {string}  placeholder  — Placeholder text shown when no option selected
@@ -21,13 +18,10 @@
  * ── Usage ─────────────────────────────────────────────────────────────────────
  * <drip-dropdown label="Country" placeholder="Select a country">
  *   <option value="us">United States</option>
- *   <option value="ca">Canada</option>
- *   <option value="mx">Mexico</option>
  * </drip-dropdown>
  *
- * <drip-dropdown label="Skills" type="multi" placeholder="Select skills...">
+ * <drip-dropdown label="Skills" type="multi" placeholder="Select multiple...">
  *   <option value="js">JavaScript</option>
- *   <option value="ts">TypeScript</option>
  * </drip-dropdown>
  */
 
@@ -42,6 +36,26 @@ function ensureFontLoaded() {
   link.setAttribute('data-drip-font', '');
   document.head.appendChild(link);
 }
+
+// ── Chevron SVG (green, matches Figma) ────────────────────────────────────────
+const chevronDown = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+  xmlns="http://www.w3.org/2000/svg">
+  <path d="M5 7.5L10 12.5L15 7.5" stroke="#26B67F" stroke-width="1.5"
+    stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+const chevronUp = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+  xmlns="http://www.w3.org/2000/svg">
+  <path d="M15 12.5L10 7.5L5 12.5" stroke="#26B67F" stroke-width="1.5"
+    stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+// ── Close icon for tags ────────────────────────────────────────────────────────
+const closeIcon = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+  xmlns="http://www.w3.org/2000/svg">
+  <path d="M2 2L8 8M8 2L2 8" stroke="#26B67F" stroke-width="1.5"
+    stroke-linecap="round"/>
+</svg>`;
 
 class DripDropdown extends HTMLElement {
   static get observedAttributes() {
@@ -63,14 +77,10 @@ class DripDropdown extends HTMLElement {
     ensureFontLoaded();
     this._extractOptions();
     this._render();
-    this._bindEvents();
   }
 
   attributeChangedCallback() {
-    if (this.shadowRoot) {
-      this._render();
-      this._bindEvents();
-    }
+    if (this.shadowRoot) this._render();
   }
 
   get value() {
@@ -99,136 +109,166 @@ class DripDropdown extends HTMLElement {
   }
 
   _extractOptions() {
-    const options = Array.from(this.querySelectorAll('option'));
-    this._options = options.map((opt) => ({
-      value: opt.value || opt.textContent,
-      label: opt.textContent || opt.value,
+    const opts = Array.from(this.querySelectorAll('option'));
+    this._options = opts.map((o) => ({
+      value: o.value || o.textContent.trim(),
+      label: o.textContent.trim() || o.value,
     }));
+    this._filteredOptions = [...this._options];
   }
 
-  _bindEvents() {
-    const trigger = this.shadowRoot?.querySelector('.dropdown-trigger');
-    const searchInput = this.shadowRoot?.querySelector('.search-input');
-    const items = this.shadowRoot?.querySelectorAll('.menu-item');
-
-    // Clear existing listeners by replacing element
-    if (trigger) {
-      const newTrigger = trigger.cloneNode(true);
-      trigger.parentNode?.replaceChild(newTrigger, trigger);
-      newTrigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this._toggleMenu();
-      });
-    }
-
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        this._searchValue = e.target.value.toLowerCase();
-        this._filterOptions();
-        this._renderMenuItems();
-      });
-    }
-
-    items?.forEach((item) => {
-      item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const type = this.getAttribute('type') || 'single';
-        const value = item.getAttribute('data-value');
-        const optionIndex = this._options.findIndex(opt => opt.value === value);
-
-        if (type === 'multi') {
-          this._toggleSelection(optionIndex);
-        } else {
-          this._selectedIndex = optionIndex;
-        }
-        this._render();
-        this._fireChangeEvent();
-        if (type !== 'multi') {
-          this._isOpen = false;
-          this._render();
-        } else {
-          this._bindEvents();
-        }
-      });
-
-      item.addEventListener('mouseenter', () => {
-        this.shadowRoot?.querySelectorAll('.menu-item').forEach((it) => {
-          it.classList.remove('hover');
-        });
-        item.classList.add('hover');
-      });
-    });
-
-    // Close on outside click
-    const closeHandler = (e) => {
-      if (!this.contains(e.target) && this._isOpen) {
-        this._closeMenu();
-      }
-    };
-    document.removeEventListener('click', closeHandler);
-    document.addEventListener('click', closeHandler);
-  }
-
-  _handleKeyboard(e) {
-    const type = this.getAttribute('type') || 'single';
-    const itemCount = this._filteredOptions.length || this._options.length;
-
-    switch (e.key) {
-      case 'Enter':
-        if (!this._isOpen) {
-          this._openMenu();
-        } else {
-          const activeItem = this.shadowRoot?.querySelector('.menu-item.hover');
-          if (activeItem) activeItem.click();
-        }
-        e.preventDefault();
-        break;
-      case 'Escape':
-        this._closeMenu();
-        e.preventDefault();
-        break;
-      case 'ArrowDown':
-        if (!this._isOpen) {
-          this._openMenu();
-        }
-        e.preventDefault();
-        break;
-    }
-  }
-
+  // ── Open / close ──────────────────────────────────────────────────────────────
   _toggleMenu() {
-    if (this._isOpen) {
-      this._closeMenu();
-    } else {
-      this._openMenu();
-    }
+    this._isOpen ? this._closeMenu() : this._openMenu();
   }
 
   _openMenu() {
     this._isOpen = true;
     this._filteredOptions = [...this._options];
-    this._render();
+    this._searchValue = '';
+    this._updateMenu();
     this.dispatchEvent(new CustomEvent('open', { bubbles: true }));
 
     setTimeout(() => {
-      const searchInput = this.shadowRoot?.querySelector('.search-input');
-      if (searchInput) searchInput.focus();
+      const si = this.shadowRoot?.querySelector('.search-input');
+      if (si) si.focus();
     }, 0);
   }
 
   _closeMenu() {
     this._isOpen = false;
     this._searchValue = '';
-    this._render();
+    this._updateMenu();
     this.dispatchEvent(new CustomEvent('close', { bubbles: true }));
   }
 
+  // ── Partial DOM update (no full re-render on open/close) ──────────────────────
+  _updateMenu() {
+    const trigger = this.shadowRoot?.querySelector('.dropdown-trigger');
+    const menu    = this.shadowRoot?.querySelector('.dropdown-menu');
+    if (!trigger || !menu) return;
+
+    if (this._isOpen) {
+      trigger.classList.add('open');
+      menu.style.display = 'block';
+      trigger.querySelector('.dropdown-icon').innerHTML = chevronUp;
+    } else {
+      trigger.classList.remove('open');
+      menu.style.display = 'none';
+      trigger.querySelector('.dropdown-icon').innerHTML = chevronDown;
+    }
+
+    this._renderMenuItems();
+  }
+
+  // ── Selection ─────────────────────────────────────────────────────────────────
   _toggleSelection(index) {
     if (this._selectedIndices.includes(index)) {
       this._selectedIndices = this._selectedIndices.filter((i) => i !== index);
     } else {
       this._selectedIndices.push(index);
     }
+  }
+
+  _removeTag(index) {
+    this._selectedIndices = this._selectedIndices.filter((i) => i !== index);
+    this._renderTags();
+    this._renderMenuItems();
+    this._fireChangeEvent();
+  }
+
+  // ── Render tag pills below trigger ────────────────────────────────────────────
+  _renderTags() {
+    const tagsEl = this.shadowRoot?.querySelector('.tags-row');
+    if (!tagsEl) return;
+
+    if (this._selectedIndices.length === 0) {
+      tagsEl.innerHTML = '';
+      return;
+    }
+
+    tagsEl.innerHTML = this._selectedIndices
+      .map((i) => {
+        const label = this._options[i]?.label || '';
+        return /* html */ `
+          <span class="tag" data-index="${i}">
+            <span class="tag-label">${label}</span>
+            <button class="tag-remove" type="button" aria-label="Remove ${label}">
+              ${closeIcon}
+            </button>
+          </span>`;
+      })
+      .join('');
+
+    tagsEl.querySelectorAll('.tag-remove').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = Number(btn.closest('.tag').getAttribute('data-index'));
+        this._removeTag(idx);
+      });
+    });
+  }
+
+  // ── Render menu items ─────────────────────────────────────────────────────────
+  _renderMenuItems() {
+    const menuItems = this.shadowRoot?.querySelector('.menu-items');
+    if (!menuItems) return;
+
+    const type = this.getAttribute('type') || 'single';
+    const opts = this._filteredOptions.length > 0
+      ? this._filteredOptions
+      : this._options;
+
+    menuItems.innerHTML = opts
+      .map((opt) => {
+        const isSelected = type === 'multi'
+          ? this._selectedIndices.includes(this._options.indexOf(opt))
+          : this._options.indexOf(opt) === this._selectedIndex;
+
+        return /* html */ `
+          <div class="menu-item ${isSelected ? 'selected' : ''}"
+               role="option"
+               aria-selected="${isSelected}"
+               data-value="${opt.value}">
+            ${type === 'multi'
+              ? `<span class="check-box ${isSelected ? 'checked' : ''}">
+                  ${isSelected ? `<svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6l3 3 5-5" stroke="#26B67F" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>` : ''}
+                </span>`
+              : ''}
+            <span class="menu-label">${opt.label}</span>
+          </div>`;
+      })
+      .join('');
+
+    menuItems.querySelectorAll('.menu-item').forEach((item) => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const val = item.getAttribute('data-value');
+        const optIdx = this._options.findIndex((o) => o.value === val);
+
+        if (type === 'multi') {
+          this._toggleSelection(optIdx);
+          this._renderTags();
+          this._renderMenuItems();
+          this._fireChangeEvent();
+        } else {
+          this._selectedIndex = optIdx;
+          const triggerText = this.shadowRoot?.querySelector('.trigger-text');
+          if (triggerText) triggerText.textContent = this._options[optIdx]?.label;
+          this._closeMenu();
+          this._fireChangeEvent();
+        }
+      });
+
+      item.addEventListener('mouseenter', () => {
+        menuItems.querySelectorAll('.menu-item').forEach((el) => el.classList.remove('hover'));
+        item.classList.add('hover');
+      });
+      item.addEventListener('mouseleave', () => item.classList.remove('hover'));
+    });
   }
 
   _filterOptions() {
@@ -241,56 +281,40 @@ class DripDropdown extends HTMLElement {
   _fireChangeEvent() {
     const type = this.getAttribute('type') || 'single';
     const value = this.value;
-    const detail =
-      type === 'multi'
-        ? { values: value.split(',').filter(Boolean) }
-        : { value };
-
-    this.dispatchEvent(new CustomEvent('change', { bubbles: true, detail }));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        detail: type === 'multi'
+          ? { values: value.split(',').filter(Boolean) }
+          : { value },
+      })
+    );
   }
 
-  _renderMenuItems() {
-    const menuItems = this.shadowRoot?.querySelector('.menu-items');
-    if (!menuItems) return;
-
-    const type = this.getAttribute('type') || 'single';
-    const options = (this._filteredOptions && this._filteredOptions.length > 0) ? this._filteredOptions : (this._options || []);
-
-    menuItems.innerHTML = options
-      .map(
-        (opt, idx) => `
-        <div class="menu-item" data-value="${opt.value}">
-          ${type === 'multi' ? `<input type="checkbox" class="menu-checkbox" />` : ''}
-          <span class="menu-label">${opt.label}</span>
-        </div>
-      `
-      )
-      .join('');
-
-    this._bindEvents();
-  }
-
+  // ── Full render (called once on connect / attribute change) ───────────────────
   _render() {
-    const label = this.getAttribute('label') || '';
+    const label       = this.getAttribute('label')       || '';
     const placeholder = this.getAttribute('placeholder') || 'Select...';
-    const type = this.getAttribute('type') || 'single';
-    const disabled = this.hasAttribute('disabled');
-    const name = this.getAttribute('name') || '';
+    const type        = this.getAttribute('type')        || 'single';
+    const disabled    = this.hasAttribute('disabled');
 
-    let displayValue = placeholder;
-    if (type === 'multi') {
-      const selected = this._selectedIndices.map((i) => this._options[i]?.label).filter(Boolean);
-      displayValue = selected.length > 0 ? selected.join(', ') : placeholder;
-    } else {
-      displayValue =
-        this._selectedIndex >= 0 ? this._options[this._selectedIndex]?.label : placeholder;
-    }
+    // Single / search trigger text
+    const triggerText =
+      this._selectedIndex >= 0 && type !== 'multi'
+        ? this._options[this._selectedIndex]?.label
+        : placeholder;
+    const isPlaceholder = triggerText === placeholder;
 
     this.shadowRoot.innerHTML = /* html */ `
       <style>
         :host { display: block; font-family: 'Nunito Sans', sans-serif; }
 
-        .field { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .field {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          width: 100%;
+        }
 
         .label {
           font-size: 14px;
@@ -299,130 +323,158 @@ class DripDropdown extends HTMLElement {
           line-height: 1;
         }
 
-        /* ── trigger (closed state) ──────────────────────────────────────── */
+        /* ── Trigger ──────────────────────────────────────────────────────── */
         .dropdown-trigger {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: #ffffff;
-          border: 1.5px solid #0A2E57;
+          width: 100%;
+          background: ${disabled ? '#F4F6F7' : '#ffffff'};
+          border: 1px solid ${disabled ? '#6F8298' : '#0A2E57'};
           border-radius: 8px;
           height: 56px;
           padding: 0 16px;
           font-family: 'Nunito Sans', sans-serif;
           font-size: 16px;
+          font-weight: 400;
+          color: ${disabled ? '#6F8298' : isPlaceholder ? '#95A3B3' : '#0A2E57'};
           cursor: ${disabled ? 'not-allowed' : 'pointer'};
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
-          color: ${displayValue === placeholder ? '#95A3B3' : '#0A2E57'};
+          box-sizing: border-box;
+          text-align: left;
         }
 
-        .dropdown-trigger:hover:not(:disabled) {
-          border-color: #217DE5;
-        }
-
+        /* Open state: light blue border (Figma: Noble Blue/200 = #6BA8EE) */
         .dropdown-trigger.open {
-          border-color: #217DE5;
-          box-shadow: 0 0 0 3px rgba(33, 125, 229, 0.15);
-        }
-
-        .dropdown-trigger.disabled {
-          background: #F4F6F7;
-          border-color: #6F8298;
-          color: #6F8298;
-          cursor: not-allowed;
+          border-color: #6BA8EE;
+          box-shadow: 0 0 0 3px rgba(107, 168, 238, 0.2);
         }
 
         .dropdown-icon {
+          flex-shrink: 0;
           width: 20px;
           height: 20px;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #6F8298;
-          transition: transform 0.2s ease;
         }
 
-        .dropdown-trigger.open .dropdown-icon {
-          transform: rotate(180deg);
+        /* ── Tags row (multi-select only) ─────────────────────────────────── */
+        .tags-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 6px;
         }
 
-        /* ── dropdown menu ──────────────────────────────────────────────── */
+        .tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          border: 1px solid #26B67F;
+          border-radius: 12px;
+          padding: 3px 8px 3px 10px;
+          background: #ffffff;
+        }
+
+        .tag-label {
+          font-size: 10px;
+          font-weight: 400;
+          color: #26B67F;
+          white-space: nowrap;
+        }
+
+        .tag-remove {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          line-height: 0;
+        }
+
+        /* ── Dropdown menu ────────────────────────────────────────────────── */
+        .dropdown-wrapper {
+          position: relative;
+          width: 100%;
+        }
+
         .dropdown-menu {
+          display: none;
           position: absolute;
-          top: 100%;
+          top: calc(100% + 8px);
           left: 0;
           right: 0;
           background: #ffffff;
           border: 1px solid #DAE9FB;
           border-radius: 8px;
-          margin-top: 8px;
           box-shadow: 0px 6px 12px 0px rgba(10, 46, 87, 0.2);
           z-index: 1000;
           max-height: 320px;
           overflow-y: auto;
-          display: ${this._isOpen ? 'block' : 'none'};
+          scrollbar-width: thin;
+          scrollbar-color: #6AB1E1 transparent;
         }
 
+        .dropdown-menu::-webkit-scrollbar { width: 4px; }
+        .dropdown-menu::-webkit-scrollbar-thumb {
+          background: #6AB1E1;
+          border-radius: 4px;
+        }
+
+        /* ── Search input ─────────────────────────────────────────────────── */
         .search-input {
           width: 100%;
           padding: 12px 16px;
           border: none;
-          outline: none;
           border-bottom: 1px solid #DAE9FB;
+          outline: none;
           font-family: 'Nunito Sans', sans-serif;
           font-size: 14px;
           color: #0A2E57;
+          box-sizing: border-box;
         }
+        .search-input::placeholder { color: #95A3B3; }
 
-        .search-input::placeholder {
-          color: #95A3B3;
-        }
-
-        /* ── menu items ─────────────────────────────────────────────────── */
-        .menu-items {
-          display: flex;
-          flex-direction: column;
-        }
+        /* ── Menu items ───────────────────────────────────────────────────── */
+        .menu-items { display: flex; flex-direction: column; }
 
         .menu-item {
           display: flex;
           align-items: center;
+          gap: 12px;
           padding: 13px 24px;
           cursor: pointer;
-          gap: 12px;
-          transition: background-color 0.1s ease;
-          color: #0A2E57;
           font-size: 16px;
           font-weight: 400;
+          color: #0A2E57;
+          transition: background-color 0.1s ease, color 0.1s ease;
         }
 
+        /* Hover and selected both use sky blue bg + green text */
         .menu-item:hover,
-        .menu-item.hover {
+        .menu-item.hover,
+        .menu-item.selected {
           background-color: #ECF5FB;
           color: #1E9263;
         }
 
-        .menu-item.selected {
-          background-color: #ffffff;
-          color: #0A2E57;
-          font-weight: 700;
-        }
-
-        .menu-checkbox {
+        /* ── Checkbox pill (multi-select) ─────────────────────────────────── */
+        .check-box {
           width: 16px;
           height: 16px;
-          cursor: pointer;
-          accent-color: #217DE5;
+          border: 1.5px solid #95A3B3;
+          border-radius: 3px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #ffffff;
         }
-
-        .menu-label {
-          flex: 1;
-        }
-
-        /* ── position for wrapper ────────────────────────────────────────── */
-        .dropdown-wrapper {
-          position: relative;
-          width: 100%;
+        .check-box.checked {
+          border-color: #26B67F;
+          background: #ffffff;
         }
       </style>
 
@@ -431,31 +483,55 @@ class DripDropdown extends HTMLElement {
 
         <div class="dropdown-wrapper">
           <button
-            class="dropdown-trigger ${this._isOpen ? 'open' : ''} ${disabled ? 'disabled' : ''}"
-            ${disabled ? 'disabled' : ''}
+            class="dropdown-trigger ${this._isOpen ? 'open' : ''}"
             type="button"
+            ${disabled ? 'disabled' : ''}
             aria-haspopup="listbox"
             aria-expanded="${this._isOpen}"
           >
-            <span>${displayValue}</span>
-            <span class="dropdown-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
+            <span class="trigger-text">${triggerText}</span>
+            <span class="dropdown-icon">${this._isOpen ? chevronUp : chevronDown}</span>
           </button>
 
-          <div class="dropdown-menu">
-            ${type === 'search' ? `<input type="text" class="search-input" placeholder="Search..." />` : ''}
-            <div class="menu-items"></div>
+          <div class="dropdown-menu" style="display:${this._isOpen ? 'block' : 'none'}">
+            ${type === 'search'
+              ? `<input class="search-input" type="text" placeholder="Search..." value="${this._searchValue}" />`
+              : ''}
+            <div class="menu-items" role="listbox"></div>
           </div>
         </div>
+
+        ${type === 'multi' ? `<div class="tags-row"></div>` : ''}
       </div>
     `;
 
+    // Bind trigger
+    const trigger = this.shadowRoot.querySelector('.dropdown-trigger');
+    if (trigger && !disabled) {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._toggleMenu();
+      });
+    }
+
+    // Bind search
+    const searchInput = this.shadowRoot.querySelector('.search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this._searchValue = e.target.value;
+        this._filterOptions();
+        this._renderMenuItems();
+      });
+    }
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!this.contains(e.target) && this._isOpen) this._closeMenu();
+    }, { once: false });
+
+    // Populate menu items and tags
     this._renderMenuItems();
-    this._bindEvents();
+    if (type === 'multi') this._renderTags();
   }
 }
 

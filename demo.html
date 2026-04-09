@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drip Capital UI Library - Components Demo</title>
+
+  <!-- Design tokens -->
+  <link rel="stylesheet" href="./src/tokens/typography.css" />
+
+  <!-- Web components -->
+  <script type="module" src="./src/components/DripText.js"></script>
+  <script type="module" src="./src/components/DripButton.js"></script>
+  <script type="module" src="./src/components/DripInput.js"></script>
+  <script type="module" src="./src/components/DripAlert.js"></script>
+  <script type="module" src="./src/components/DripDropdown.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Nunito Sans', sans-serif;
+      background: #f5f7fa;
+      color: #0A2E57;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1E9263 0%, #26B67F 100%);
+      color: white;
+      padding: 60px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px 0;
+      font-size: 48px;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px;
+    }
+
+    .section {
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0 0 30px 0;
+      border-bottom: 3px solid #1E9263;
+      padding-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #26B67F;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .component-card {
+      background: white;
+      border: 1px solid #e0e8f0;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 2px 8px rgba(10, 46, 87, 0.08);
+    }
+
+    .component-card h3 {
+      margin: 0 0 20px 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .component-card label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #6F8298;
+    }
+
+    .component-card > * + * {
+      margin-top: 16px;
+    }
+
+    drip-button {
+      width: 100%;
+    }
+
+    drip-input {
+      width: 100%;
+    }
+
+    drip-dropdown {
+      width: 100%;
+    }
+
+    .alert-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    drip-alert {
+      width: 100%;
+    }
+
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    footer {
+      background: #0A2E57;
+      color: white;
+      padding: 40px;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>🎨 Drip Capital UI Library</h1>
+    <p>Enterprise-grade web components for the Drip Capital design system</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+
+    <!-- Typography Section -->
+    <div class="section">
+      <h2 class="section-title">📝 Typography <span class="badge">FOUNDATION</span></h2>
+      <div class="component-grid">
+        <div class="component-card">
+          <h3>Heading 1</h3>
+          <drip-text variant="h1">The seamless trade platform</drip-text>
+        </div>
+        <div class="component-card">
+          <h3>Heading 2</h3>
+          <drip-text variant="h2">Solution to your cashflow needs</drip-text>
+        </div>
+        <div class="component-card">
+          <h3>Body Text</h3>
+          <drip-text variant="body">Nunito Sans is the primary typeface for Drip Capital</drip-text>
+        </div>
+      </div>
+    </div>
+
+    <!-- Text Input Section -->
+    <div class="section">
+      <h2 class="section-title">⌨️ Text Input</h2>
+      <div class="component-grid">
+        <div class="component-card">
+          <h3>Default Input</h3>
+          <drip-input label="Email Address" placeholder="you@company.com" type="email"></drip-input>
+        </div>
+        <div class="component-card">
+          <h3>Input with Helper</h3>
+          <drip-input label="Password" type="password" helper="Must be at least 8 characters"></drip-input>
+        </div>
+        <div class="component-card">
+          <h3>Input with Error</h3>
+          <drip-input label="Email" placeholder="your@email.com" error="Invalid email address"></drip-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown Section -->
+    <div class="section">
+      <h2 class="section-title">🎯 Dropdown <span class="badge">NEW!</span></h2>
+      <div class="component-grid">
+        <div class="component-card">
+          <h3>Single Select</h3>
+          <label>Choose an option:</label>
+          <drip-dropdown type="single">
+            <option>Option 1</option>
+            <option>Option 2</option>
+            <option>Option 3</option>
+          </drip-dropdown>
+        </div>
+        <div class="component-card">
+          <h3>Multi-Select</h3>
+          <label>Choose multiple:</label>
+          <drip-dropdown type="multi">
+            <option>Apple</option>
+            <option>Banana</option>
+            <option>Orange</option>
+          </drip-dropdown>
+        </div>
+        <div class="component-card">
+          <h3>Searchable</h3>
+          <label>Search and select:</label>
+          <drip-dropdown type="search">
+            <option>JavaScript</option>
+            <option>TypeScript</option>
+            <option>Python</option>
+          </drip-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button Section -->
+    <div class="section">
+      <h2 class="section-title">🔘 Button</h2>
+      <div class="component-grid">
+        <div class="component-card">
+          <h3>Primary Button</h3>
+          <drip-button variant="primary">Sign In</drip-button>
+        </div>
+        <div class="component-card">
+          <h3>Secondary Button</h3>
+          <drip-button variant="secondary">Cancel</drip-button>
+        </div>
+        <div class="component-card">
+          <h3>Tertiary Button</h3>
+          <drip-button variant="tertiary">Learn More</drip-button>
+        </div>
+        <div class="component-card">
+          <h3>Primary Disabled</h3>
+          <drip-button disabled>Processing…</drip-button>
+        </div>
+        <div class="component-card">
+          <h3>Secondary Disabled</h3>
+          <drip-button variant="secondary" disabled>Unavailable</drip-button>
+        </div>
+        <div class="component-card">
+          <h3>Tertiary Disabled</h3>
+          <drip-button variant="tertiary" disabled>Disabled</drip-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Section -->
+    <div class="section">
+      <h2 class="section-title">⚠️ Alert</h2>
+      <div class="alert-demo">
+        <drip-alert variant="info" title="Informational" message="This is an informational message"></drip-alert>
+        <drip-alert variant="success" title="Success!" message="Action completed successfully"></drip-alert>
+        <drip-alert variant="warning" title="Warning" message="Please review this action"></drip-alert>
+        <drip-alert variant="error" title="Error" message="Something went wrong"></drip-alert>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="section">
+      <h2 class="section-title">✨ Features</h2>
+      <ul style="font-size: 16px; line-height: 1.8;">
+        <li>✓ Zero dependencies</li>
+        <li>✓ Web Components (Framework-agnostic)</li>
+        <li>✓ Shadow DOM encapsulation</li>
+        <li>✓ Responsive design</li>
+        <li>✓ Keyboard navigation</li>
+        <li>✓ ARIA accessibility</li>
+        <li>✓ Design tokens from Figma</li>
+        <li>✓ Event system (change, input, dismiss)</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Built with ❤️ for Drip Capital | Web Components · Zero Dependencies · Framework Agnostic</p>
+  </footer>
+
+</body>
+</html>

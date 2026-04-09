@@ -64,23 +64,31 @@ class DripButton extends HTMLElement {
     const s        = SIZE_MAP[size] ?? SIZE_MAP.large;
 
     // ── Color tokens from Figma ──────────────────────────────────────────────
-    // Primary enabled:  bg #26B67F  text white
-    // Primary hover:    bg #1d8f64
-    // Primary disabled: bg #F4F6F7  text #95A3B3  border none
-    // Secondary enabled:  bg white  border #0A2E57  text #0A2E57
-    // Secondary hover:    bg #F4F6F7
-    // Secondary disabled: bg #F4F6F7 border #95A3B3 text #95A3B3
+    // Primary enabled:   bg #26B67F  text white
+    // Primary hover:     bg #1d8f64
+    // Primary disabled:  bg #F4F6F7  text #95A3B3  border none
+    // Secondary enabled:   bg white  border #26b67c  text #26b67c
+    // Secondary hover:     bg #F4F6F7
+    // Secondary disabled:  bg #F4F6F7 border #95A3B3 text #95A3B3
+    // Tertiary enabled:    bg transparent  text #26b67c
+    // Tertiary hover:      bg #F4F6F7
+    // Tertiary disabled:   bg transparent  text #95A3B3
 
     let bg, textColor, border, hoverBg, hoverBorder;
 
     if (disabled) {
-      bg = '#F4F6F7'; textColor = '#95A3B3';
-      border = variant === 'secondary' ? '1px solid #95A3B3' : 'none';
+      bg = variant === 'tertiary' ? 'transparent' : '#F4F6F7';
+      textColor = '#95A3B3';
+      border = variant === 'secondary' ? '2px solid #95A3B3' : 'none';
       hoverBg = bg; hoverBorder = border;
     } else if (variant === 'secondary') {
-      bg = '#ffffff'; textColor = '#0A2E57';
-      border = '1.5px solid #0A2E57';
-      hoverBg = '#F4F6F7'; hoverBorder = border;
+      bg = '#ffffff'; textColor = '#26b67c';
+      border = '2px solid #26b67c';
+      hoverBg = '#e7faf2'; hoverBorder = border;
+    } else if (variant === 'tertiary') {
+      bg = 'transparent'; textColor = '#26b67c';
+      border = 'none';
+      hoverBg = '#F4F6F7'; hoverBorder = 'none';
     } else {
       bg = '#26B67F'; textColor = '#ffffff';
       border = 'none';
