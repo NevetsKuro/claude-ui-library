@@ -3,9 +3,9 @@
   "configurations": [
     {
       "name": "claude-ui-library",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["server.cjs"],
-      "port": 3000
+      "runtimeExecutable": "/usr/local/bin/npx",
+      "runtimeArgs": ["serve", ".", "--listen", "3456"],
+      "port": 3456
     }
   ]
 }

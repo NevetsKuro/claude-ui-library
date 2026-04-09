@@ -1,67 +1,46 @@
-/**
- * Dev server for claude-ui-library
- * Serves the project on localhost:3000
- */
+const http = require('http')
+const fs = require('fs')
+const path = require('path')
 
-const { createServer } = require('http');
-const { parse } = require('url');
-const { readFileSync, existsSync } = require('fs');
-const { join } = require('path');
+const ROOT = path.join(__dirname)
+const PORT = process.env.PORT || 3456
 
-const PORT = process.env.PORT || 3000;
-const ROOT_DIR = __dirname;
-
-// Simple MIME type mapping
-const MIME_TYPES = {
+const MIME = {
   '.html': 'text/html',
-  '.js': 'text/javascript',
   '.css': 'text/css',
+  '.js': 'application/javascript',
   '.json': 'application/json',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-};
-
-function getFileExtension(filePath) {
-  const lastDot = filePath.lastIndexOf('.');
-  return lastDot > 0 ? filePath.slice(lastDot) : '';
+  '.ico': 'image/x-icon'
 }
 
-const server = createServer((req, res) => {
-  const parsedUrl = parse(req.url, true);
-  let pathname = decodeURIComponent(parsedUrl.pathname);
+http
+  .createServer((req, res) => {
+    let urlPath = req.url.split('?')[0]
+    if (urlPath === '/' || urlPath === '') urlPath = '/index.html'
 
-  // Serve index.html for root path
-  if (pathname === '/' || pathname === '') {
-    pathname = '/index.html';
-  }
+    const filePath = path.join(ROOT, urlPath)
 
-  let filePath = join(ROOT_DIR, pathname);
-
-  // Try the requested file
-  if (existsSync(filePath)) {
-    try {
-      const content = readFileSync(filePath);
-      const ext = getFileExtension(filePath);
-      const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
-      res.writeHead(200, { 'Content-Type': mimeType });
-      res.end(content);
-      return;
-    } catch (err) {
-      res.writeHead(500);
-      res.end('Error reading file');
-      return;
+    // Prevent directory traversal
+    if (!filePath.startsWith(ROOT)) {
+      res.writeHead(403)
+      res.end('Forbidden')
+      return
     }
-  }
 
-  // If not found, return 404
-  res.writeHead(404, { 'Content-Type': 'text/html' });
-  res.end('<h1>404 - Not Found</h1>');
-});
-
-server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
-});
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('Not found: ' + urlPath)
+        return
+      }
+      const ext = path.extname(filePath).toLowerCase()
+      const mime = MIME[ext] || 'application/octet-stream'
+      res.writeHead(200, { 'Content-Type': mime })
+      res.end(data)
+    })
+  })
+  .listen(PORT, () => {
+    console.log(`Drip Typography server running at http://localhost:${PORT}`)
+  })
