@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drip Capital UI Library - Components Showcase</title>
+  <link rel="stylesheet" href="src/tokens/typography.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito Sans', sans-serif;
+      background: linear-gradient(135deg, #f8fafb 0%, #ecf5fb 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      color: #0a2e57;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #6f8298;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(10, 46, 87, 0.08);
+      border: 1px solid rgba(10, 46, 87, 0.1);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 24px rgba(10, 46, 87, 0.15);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0a2e57;
+      margin-bottom: 22px;
+      padding-bottom: 12px;
+      border-bottom: 2.5px solid #217de5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .demo {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .demo-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    drip-button {
+      min-width: 120px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #ecf5fb;
+      color: #217de5;
+    }
+
+    .status.new {
+      background: #cff5e6;
+      color: #1e9263;
+    }
+
+    code {
+      background: #f4f6f7;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #0a2e57;
+      font-family: 'Courier New', monospace;
+    }
+
+    .note {
+      background: #ecf5fb;
+      border-left: 4px solid #217de5;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #0a2e57;
+      margin-top: 16px;
+    }
+
+    .component-states {
+      display: grid;
+      gap: 12px;
+    }
+
+    .state-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6f8298;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .features-list li {
+      font-size: 14px;
+      color: #0a2e57;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .features-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #1e9263;
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0a2e57;
+      margin-bottom: 28px;
+      margin-top: 50px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-left: 8px;
+    }
+
+    .badge.primary {
+      background: #217de5;
+      color: white;
+    }
+
+    .badge.secondary {
+      background: #cff5e6;
+      color: #1e9263;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎨 Drip Capital UI Library</h1>
+      <p class="subtitle">Enterprise-grade web components for the Drip Capital design system</p>
+    </header>
+
+    <h2 class="section-title">Core Components</h2>
+
+    <div class="grid">
+      <!-- Typography -->
+      <div class="card">
+        <div class="card-title">📝 Typography <span class="badge primary">Foundation</span></div>
+        <div class="demo">
+          <script type="module" src="src/components/DripText.js"></script>
+          <div>
+            <drip-text variant="h1">Heading 1</drip-text>
+          </div>
+          <div>
+            <drip-text variant="h2">Heading 2</drip-text>
+          </div>
+          <div>
+            <drip-text variant="body" weight="bold">Bold body text</drip-text>
+          </div>
+          <div>
+            <drip-text variant="label">Label</drip-text>
+          </div>
+          <div class="note">
+            Component: <code>&lt;drip-text variant="..."&gt;</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text Input -->
+      <div class="card">
+        <div class="card-title">⌨️ Text Input</div>
+        <div class="demo">
+          <script type="module" src="src/components/DripInput.js"></script>
+          <drip-input label="Email" placeholder="you@company.com" type="email"></drip-input>
+          <drip-input label="Password" type="password" placeholder="Enter password"></drip-input>
+          <drip-input label="Error State" error="Invalid email address"></drip-input>
+          <drip-input label="Disabled" disabled placeholder="Cannot edit"></drip-input>
+          <div class="note">
+            Component: <code>&lt;drip-input&gt;</code> — Multiple states supported
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown (NEW) -->
+      <div class="card">
+        <div class="card-title">🎯 Dropdown <span class="badge secondary">New!</span></div>
+        <div class="demo">
+          <script type="module" src="src/components/DripDropdown.js"></script>
+          <drip-dropdown label="Single Select" placeholder="Choose one...">
+            <option value="us">United States</option>
+            <option value="ca">Canada</option>
+            <option value="uk">United Kingdom</option>
+          </drip-dropdown>
+          <drip-dropdown label="Multi-Select" type="multi" placeholder="Choose multiple...">
+            <option value="js">JavaScript</option>
+            <option value="ts">TypeScript</option>
+            <option value="react">React</option>
+          </drip-dropdown>
+          <drip-dropdown label="Searchable" type="search" placeholder="Search...">
+            <option value="apple">Apple</option>
+            <option value="apricot">Apricot</option>
+            <option value="banana">Banana</option>
+          </drip-dropdown>
+          <div class="note">
+            Component: <code>&lt;drip-dropdown type="single|multi|search"&gt;</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button -->
+      <div class="card">
+        <div class="card-title">🔘 Button</div>
+        <div class="demo">
+          <script type="module" src="src/components/DripButton.js"></script>
+          <div class="button-group">
+            <drip-button>Default</drip-button>
+            <drip-button variant="primary">Primary</drip-button>
+            <drip-button disabled>Disabled</drip-button>
+          </div>
+          <div class="note">
+            Component: <code>&lt;drip-button variant="..."&gt;</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="card">
+        <div class="card-title">⚠️ Alert</div>
+        <div class="demo">
+          <script type="module" src="src/components/DripAlert.js"></script>
+          <drip-alert type="info">Informational message</drip-alert>
+          <drip-alert type="success">Success! Action completed</drip-alert>
+          <drip-alert type="warning">Warning: Please review</drip-alert>
+          <drip-alert type="error">Error: Something failed</drip-alert>
+          <div class="note">
+            Component: <code>&lt;drip-alert type="..."&gt;</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="card">
+        <div class="card-title">✨ Features</div>
+        <ul class="features-list">
+          <li>Zero dependencies</li>
+          <li>Web Components (Framework-agnostic)</li>
+          <li>Shadow DOM encapsulation</li>
+          <li>Responsive design</li>
+          <li>Keyboard navigation</li>
+          <li>ARIA accessibility</li>
+          <li>Design tokens from Figma</li>
+          <li>Event system (change, input, etc)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="section-title">Design System Specifications</h2>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">🎨 Colors</div>
+        <div style="display: grid; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 32px; height: 32px; background: #0A2E57; border-radius: 4px;"></div>
+            <span>Noble Blue 500 (#0A2E57)</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 32px; height: 32px; background: #217DE5; border-radius: 4px;"></div>
+            <span>Primary Blue (#217DE5)</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 32px; height: 32px; background: #1E9263; border-radius: 4px;"></div>
+            <span>Wealthy Green (#1E9263)</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 32px; height: 32px; background: #ECF5FB; border: 1px solid #DAE9FB; border-radius: 4px;"></div>
+            <span>Sky Blue 50 (#ECF5FB)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📐 Typography</div>
+        <div class="component-states">
+          <div>
+            <div class="state-label">Font Family</div>
+            <p style="font-family: 'Nunito Sans', sans-serif; margin-top: 8px;">Nunito Sans</p>
+          </div>
+          <div>
+            <div class="state-label">Heading Size (Desktop)</div>
+            <p style="margin-top: 8px;">H1: 44px | H2: 32px | H3: 24px | H4: 20px</p>
+          </div>
+          <div>
+            <div class="state-label">Body Sizes</div>
+            <p style="margin-top: 8px;">Body: 16px | Label: 14px | Small: 12px</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎯 Component States</div>
+        <div class="component-states">
+          <div>
+            <div class="state-label">Common States</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+              <span class="status">Enabled</span>
+              <span class="status">Hover</span>
+              <span class="status">Active</span>
+              <span class="status">Disabled</span>
+            </div>
+          </div>
+          <div>
+            <div class="state-label">Input States</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+              <span class="status">Default</span>
+              <span class="status">Focused</span>
+              <span class="status">Filled</span>
+              <span class="status">Error</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 60px; padding: 30px; background: rgba(33, 125, 229, 0.05); border-radius: 12px;">
+      <p style="color: #6f8298; font-size: 14px;">
+        Built with ❤️ for Drip Capital | Web Components · Zero Dependencies · Framework Agnostic
+      </p>
+    </div>
+  </div>
+</body>
+</html>

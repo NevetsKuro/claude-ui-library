@@ -55,6 +55,7 @@ class DripDropdown extends HTMLElement {
     this._selectedIndex = -1;
     this._selectedIndices = [];
     this._searchValue = '';
+    this._options = [];
     this._filteredOptions = [];
   }
 
@@ -107,12 +108,17 @@ class DripDropdown extends HTMLElement {
 
   _bindEvents() {
     const trigger = this.shadowRoot?.querySelector('.dropdown-trigger');
-    const menu = this.shadowRoot?.querySelector('.dropdown-menu');
     const searchInput = this.shadowRoot?.querySelector('.search-input');
     const items = this.shadowRoot?.querySelectorAll('.menu-item');
 
+    // Clear existing listeners by replacing element
     if (trigger) {
-      trigger.addEventListener('click', () => this._toggleMenu());
+      const newTrigger = trigger.cloneNode(true);
+      trigger.parentNode?.replaceChild(newTrigger, trigger);
+      newTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._toggleMenu();
+      });
     }
 
     if (searchInput) {
@@ -123,18 +129,26 @@ class DripDropdown extends HTMLElement {
       });
     }
 
-    items?.forEach((item, index) => {
-      item.addEventListener('click', () => {
+    items?.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
         const type = this.getAttribute('type') || 'single';
+        const value = item.getAttribute('data-value');
+        const optionIndex = this._options.findIndex(opt => opt.value === value);
+
         if (type === 'multi') {
-          this._toggleSelection(index);
+          this._toggleSelection(optionIndex);
         } else {
-          this._selectedIndex = index;
-          this._isOpen = false;
+          this._selectedIndex = optionIndex;
         }
         this._render();
         this._fireChangeEvent();
-        if (type !== 'multi') this._closeMenu();
+        if (type !== 'multi') {
+          this._isOpen = false;
+          this._render();
+        } else {
+          this._bindEvents();
+        }
       });
 
       item.addEventListener('mouseenter', () => {
@@ -146,18 +160,13 @@ class DripDropdown extends HTMLElement {
     });
 
     // Close on outside click
-    document.addEventListener('click', (e) => {
+    const closeHandler = (e) => {
       if (!this.contains(e.target) && this._isOpen) {
         this._closeMenu();
       }
-    });
-
-    // Keyboard navigation
-    if (menu?.offsetParent !== null) {
-      this.addEventListener('keydown', (e) => {
-        this._handleKeyboard(e);
-      });
-    }
+    };
+    document.removeEventListener('click', closeHandler);
+    document.addEventListener('click', closeHandler);
   }
 
   _handleKeyboard(e) {
@@ -245,7 +254,7 @@ class DripDropdown extends HTMLElement {
     if (!menuItems) return;
 
     const type = this.getAttribute('type') || 'single';
-    const options = this._filteredOptions.length > 0 ? this._filteredOptions : this._options;
+    const options = (this._filteredOptions && this._filteredOptions.length > 0) ? this._filteredOptions : (this._options || []);
 
     menuItems.innerHTML = options
       .map(
