@@ -126,6 +126,6 @@ class DripText extends HTMLElement {
   }
 }
 
-customElements.define('drip-text', DripText);
+customElements.define('cl-text', DripText);
 
 export default DripText;

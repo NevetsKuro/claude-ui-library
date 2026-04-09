@@ -1,17 +1,18 @@
 /**
- * <drip-button> — Drip Capital Button Web Component
- * Source: Figma node 103:10976 (Primary Button, Secondary Button)
+ * <cl-button> — Drip Capital Button Web Component
+ * Source: Figma node 103:10976 (Primary Button, Secondary Button, Tertiary Button)
  *
  * ── Attributes ────────────────────────────────────────────────────────────────
- * @attr {string}  variant  — primary | secondary          Default: primary
- * @attr {string}  size     — large | medium | small        Default: large
+ * @attr {string}  variant  — primary | secondary | tertiary   Default: primary
+ * @attr {string}  size     — large | medium | small            Default: large
  * @attr {boolean} disabled — disables the button
- * @attr {string}  type     — submit | button | reset       Default: button
+ * @attr {string}  type     — submit | button | reset           Default: button
  *
  * ── Usage ─────────────────────────────────────────────────────────────────────
- * <drip-button>Sign In</drip-button>
- * <drip-button variant="secondary" size="medium">Cancel</drip-button>
- * <drip-button disabled>Loading…</drip-button>
+ * <cl-button>Sign In</cl-button>
+ * <cl-button variant="secondary" size="medium">Cancel</cl-button>
+ * <cl-button variant="tertiary">Learn More</cl-button>
+ * <cl-button disabled>Loading…</cl-button>
  */
 
 const FONT_URL =
@@ -41,19 +42,63 @@ class DripButton extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    // Stored reference for cleanup — prevents listener accumulation
+    this._clickHandler = null;
   }
 
   connectedCallback() {
     ensureFontLoaded();
     this._render();
-    // Forward native click to inner button so form submission still works
-    this.shadowRoot.querySelector('button').addEventListener('click', () => {
-      if (!this.hasAttribute('disabled')) this.dispatchEvent(new Event('click', { bubbles: true }));
-    });
+    this._bindClick();
   }
 
-  attributeChangedCallback() {
-    if (this.shadowRoot) this._render();
+  disconnectedCallback() {
+    // Clean up click listener when element is removed from DOM
+    const btn = this.shadowRoot?.querySelector('button');
+    if (btn && this._clickHandler) {
+      btn.removeEventListener('click', this._clickHandler);
+    }
+    this._clickHandler = null;
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal === newVal || !this.shadowRoot.innerHTML) return;
+
+    // Fine-grained updates — avoid full re-render for single-attribute changes
+    if (name === 'disabled') {
+      this._updateDisabledState();
+    } else {
+      // variant, size, type require full style recalculation
+      this._render();
+      this._bindClick();
+    }
+  }
+
+  // ── Fine-grained disabled toggle (no Shadow DOM teardown) ─────────────────────
+  _updateDisabledState() {
+    const btn     = this.shadowRoot?.querySelector('button');
+    const disabled = this.hasAttribute('disabled');
+    if (!btn) return;
+
+    btn.disabled = disabled;
+    btn.style.cursor = disabled ? 'not-allowed' : 'pointer';
+  }
+
+  // ── Bind click — stored ref prevents accumulation across re-renders ───────────
+  _bindClick() {
+    const btn = this.shadowRoot?.querySelector('button');
+    if (!btn) return;
+
+    // Remove old listener before attaching new one
+    if (this._clickHandler) {
+      btn.removeEventListener('click', this._clickHandler);
+    }
+    this._clickHandler = () => {
+      if (!this.hasAttribute('disabled')) {
+        this.dispatchEvent(new Event('click', { bubbles: true }));
+      }
+    };
+    btn.addEventListener('click', this._clickHandler);
   }
 
   _render() {
@@ -64,23 +109,18 @@ class DripButton extends HTMLElement {
     const s        = SIZE_MAP[size] ?? SIZE_MAP.large;
 
     // ── Color tokens from Figma ──────────────────────────────────────────────
-    // Primary enabled:   bg #26B67F  text white
-    // Primary hover:     bg #1d8f64
-    // Primary disabled:  bg #F4F6F7  text #95A3B3  border none
-    // Secondary enabled:   bg white  border #26b67c  text #26b67c
-    // Secondary hover:     bg #F4F6F7
-    // Secondary disabled:  bg #F4F6F7 border #95A3B3 text #95A3B3
-    // Tertiary enabled:    bg transparent  text #26b67c
-    // Tertiary hover:      bg #F4F6F7
-    // Tertiary disabled:   bg transparent  text #95A3B3
+    // Primary:   bg #26B67F  text white         hover: #1d8f64
+    // Secondary: bg white    border/text #26b67c hover: bg #e7faf2
+    // Tertiary:  bg transparent text #26b67c    hover: bg #F4F6F7
+    // Disabled (all): bg #F4F6F7 (transparent for tertiary)  text #95A3B3
 
     let bg, textColor, border, hoverBg, hoverBorder;
 
     if (disabled) {
-      bg = variant === 'tertiary' ? 'transparent' : '#F4F6F7';
+      bg        = variant === 'tertiary' ? 'transparent' : '#F4F6F7';
       textColor = '#95A3B3';
-      border = variant === 'secondary' ? '2px solid #95A3B3' : 'none';
-      hoverBg = bg; hoverBorder = border;
+      border    = variant === 'secondary' ? '2px solid #95A3B3' : 'none';
+      hoverBg   = bg; hoverBorder = border;
     } else if (variant === 'secondary') {
       bg = '#ffffff'; textColor = '#26b67c';
       border = '2px solid #26b67c';
@@ -141,5 +181,5 @@ class DripButton extends HTMLElement {
   }
 }
 
-customElements.define('drip-button', DripButton);
+customElements.define('cl-button', DripButton);
 export default DripButton;

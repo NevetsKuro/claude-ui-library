@@ -193,5 +193,5 @@ class DripAlert extends HTMLElement {
   }
 }
 
-customElements.define('drip-alert', DripAlert);
+customElements.define('cl-alert', DripAlert);
 export default DripAlert;

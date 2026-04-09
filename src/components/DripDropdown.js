@@ -1,5 +1,5 @@
 /**
- * <drip-dropdown> — Drip Capital Dropdown Web Component
+ * <cl-dropdown> — Drip Capital Dropdown Web Component
  * Source: Figma node 103:11076 (Dropdowns)
  *
  * ── Attributes ────────────────────────────────────────────────────────────────
@@ -58,11 +58,16 @@ class DripDropdown extends HTMLElement {
     this._options = [];
     this._filteredOptions = [];
 
-    // Stored handler references for proper cleanup (fixes memory leak)
+    // Stored handler references for proper cleanup — prevents listener accumulation
     this._closeHandler = null;
     this._triggerClickHandler = null;
     this._triggerKeyHandler = null;
     this._searchInputHandler = null;
+    // Delegated handlers for stable container elements
+    this._menuClickHandler = null;
+    this._menuMouseoverHandler = null;
+    this._menuMouseleaveHandler = null;
+    this._tagsClickHandler = null;
   }
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────────
@@ -72,8 +77,18 @@ class DripDropdown extends HTMLElement {
     this._render();
   }
 
-  attributeChangedCallback() {
-    if (this.shadowRoot.innerHTML) this._render();
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal === newVal || !this.shadowRoot.innerHTML) return;
+
+    // Fine-grained updates avoid full Shadow DOM teardown for simple attribute changes
+    if (name === 'disabled') {
+      this._updateDisabledState();
+    } else if (name === 'label') {
+      this._updateLabel();
+    } else {
+      // type, placeholder, value, name require full re-render
+      this._render();
+    }
   }
 
   disconnectedCallback() {
@@ -82,6 +97,28 @@ class DripDropdown extends HTMLElement {
       document.removeEventListener('click', this._closeHandler);
       this._closeHandler = null;
     }
+  }
+
+  // ── Fine-grained attribute updates ────────────────────────────────────────────
+
+  _updateDisabledState() {
+    const trigger = this.shadowRoot?.querySelector('.dropdown-trigger');
+    const labelEl = this.shadowRoot?.querySelector('.label');
+    const disabled = this.hasAttribute('disabled');
+    if (!trigger) return;
+
+    trigger.disabled = disabled;
+    trigger.setAttribute('aria-disabled', String(disabled));
+    trigger.style.cursor   = disabled ? 'not-allowed' : 'pointer';
+    trigger.style.background = disabled ? '#F4F6F7' : '#ffffff';
+    trigger.style.borderColor = disabled ? '#6F8298' : '#0A2E57';
+    trigger.style.color    = disabled ? '#6F8298' : '';
+    if (labelEl) labelEl.style.color = disabled ? '#6F8298' : '#0A2E57';
+  }
+
+  _updateLabel() {
+    const labelEl = this.shadowRoot?.querySelector('.label');
+    if (labelEl) labelEl.textContent = this.getAttribute('label') || '';
   }
 
   // ── Public API ────────────────────────────────────────────────────────────────
@@ -114,7 +151,7 @@ class DripDropdown extends HTMLElement {
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
 
-  /** Escape user-provided strings before injecting into innerHTML (XSS fix) */
+  /** Escape user-provided strings before injecting into innerHTML (XSS prevention) */
   _escapeHtml(text) {
     const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
     return String(text).replace(/[&<>"']/g, (m) => map[m]);
@@ -201,13 +238,17 @@ class DripDropdown extends HTMLElement {
         }
         e.preventDefault();
         break;
+
       case 'Escape':
         this._closeMenu();
         e.preventDefault();
         break;
+
       case 'ArrowDown': {
         if (!this._isOpen) { this._openMenu(); e.preventDefault(); break; }
         const items = [...(this.shadowRoot?.querySelectorAll('.menu-item') || [])];
+        // Guard: prevent % 0 → NaN when list is empty
+        if (items.length === 0) { e.preventDefault(); break; }
         const current = items.findIndex((el) => el.classList.contains('hover'));
         items.forEach((el) => el.classList.remove('hover'));
         const next = items[(current + 1) % items.length];
@@ -215,9 +256,12 @@ class DripDropdown extends HTMLElement {
         e.preventDefault();
         break;
       }
+
       case 'ArrowUp': {
         if (!this._isOpen) { this._openMenu(); e.preventDefault(); break; }
         const itemsUp = [...(this.shadowRoot?.querySelectorAll('.menu-item') || [])];
+        // Guard: prevent % 0 → NaN when list is empty
+        if (itemsUp.length === 0) { e.preventDefault(); break; }
         const curUp = itemsUp.findIndex((el) => el.classList.contains('hover'));
         itemsUp.forEach((el) => el.classList.remove('hover'));
         const prev = itemsUp[(curUp - 1 + itemsUp.length) % itemsUp.length];
@@ -244,7 +288,7 @@ class DripDropdown extends HTMLElement {
     this._fireChangeEvent();
   }
 
-  // ── Tag pills (multi-select filled state) ─────────────────────────────────────
+  // ── Tag pills (multi-select) — innerHTML only, no listener attachment ──────────
   _renderTags() {
     const tagsEl = this.shadowRoot?.querySelector('.tags-row');
     if (!tagsEl) return;
@@ -264,16 +308,10 @@ class DripDropdown extends HTMLElement {
           </span>`;
       })
       .join('');
-
-    tagsEl.querySelectorAll('.tag-remove').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this._removeTag(Number(btn.closest('.tag').dataset.index));
-      });
-    });
+    // Clicks handled by delegated listener on .tags-row set up in _bindEvents()
   }
 
-  // ── Menu items ────────────────────────────────────────────────────────────────
+  // ── Menu items — innerHTML only, no listener attachment ───────────────────────
   _renderMenuItems() {
     const menuItems = this.shadowRoot?.querySelector('.menu-items');
     if (!menuItems) return;
@@ -288,7 +326,6 @@ class DripDropdown extends HTMLElement {
           ? this._selectedIndices.has(globalIdx)
           : globalIdx === this._selectedIndex;
 
-        // Escape both value (used in attribute) and label (shown in UI)
         const safeValue = this._escapeHtml(opt.value);
         const safeLabel = this._escapeHtml(opt.label);
 
@@ -313,44 +350,20 @@ class DripDropdown extends HTMLElement {
           </div>`;
       })
       .join('');
-
-    menuItems.querySelectorAll('.menu-item').forEach((item) => {
-      item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const val    = item.getAttribute('data-value');
-        const optIdx = this._options.findIndex((o) => o.value === val);
-
-        if (type === 'multi') {
-          this._toggleSelection(optIdx);
-          this._renderTags();
-          this._renderMenuItems();
-          this._fireChangeEvent();
-        } else {
-          this._selectedIndex = optIdx;
-          const triggerText = this.shadowRoot?.querySelector('.trigger-text');
-          if (triggerText) triggerText.textContent = this._options[optIdx]?.label;
-          this._closeMenu();
-          this._fireChangeEvent();
-        }
-      });
-
-      item.addEventListener('mouseenter', () => {
-        menuItems.querySelectorAll('.menu-item').forEach((el) => el.classList.remove('hover'));
-        item.classList.add('hover');
-      });
-      item.addEventListener('mouseleave', () => item.classList.remove('hover'));
-    });
+    // Clicks and hover handled by delegated listeners on .menu-items set up in _bindEvents()
   }
 
-  // ── Event binding (stored refs for cleanup) ───────────────────────────────────
+  // ── Event binding — called once per render, uses stored refs for cleanup ───────
   _bindEvents() {
-    const trigger     = this.shadowRoot?.querySelector('.dropdown-trigger');
-    const searchInput = this.shadowRoot?.querySelector('.search-input');
-    const disabled    = this.hasAttribute('disabled');
+    const trigger          = this.shadowRoot?.querySelector('.dropdown-trigger');
+    const searchInput      = this.shadowRoot?.querySelector('.search-input');
+    const menuItemsContainer = this.shadowRoot?.querySelector('.menu-items');
+    const tagsContainer    = this.shadowRoot?.querySelector('.tags-row');
+    const disabled         = this.hasAttribute('disabled');
+    const type             = this.getAttribute('type') || 'single';
 
     // ── Trigger click ──────────────────────────────────────────────────────────
     if (trigger && !disabled) {
-      // Remove previous listener before attaching a new one
       if (this._triggerClickHandler) {
         trigger.removeEventListener('click', this._triggerClickHandler);
       }
@@ -378,8 +391,74 @@ class DripDropdown extends HTMLElement {
       searchInput.addEventListener('input', this._searchInputHandler);
     }
 
+    // ── Delegated listener on .menu-items (stable container) ──────────────────
+    // Handles all click and hover events for dynamically re-rendered menu items
+    // without re-attaching listeners on every render.
+    if (menuItemsContainer) {
+      if (this._menuClickHandler) {
+        menuItemsContainer.removeEventListener('click', this._menuClickHandler);
+      }
+      if (this._menuMouseoverHandler) {
+        menuItemsContainer.removeEventListener('mouseover', this._menuMouseoverHandler);
+      }
+      if (this._menuMouseleaveHandler) {
+        menuItemsContainer.removeEventListener('mouseleave', this._menuMouseleaveHandler);
+      }
+
+      this._menuClickHandler = (e) => {
+        const item = e.target.closest('.menu-item');
+        if (!item) return;
+        e.stopPropagation();
+
+        const val    = item.getAttribute('data-value');
+        const optIdx = this._options.findIndex((o) => o.value === val);
+
+        if (type === 'multi') {
+          this._toggleSelection(optIdx);
+          this._renderTags();
+          this._renderMenuItems();
+          this._fireChangeEvent();
+        } else {
+          this._selectedIndex = optIdx;
+          const triggerText = this.shadowRoot?.querySelector('.trigger-text');
+          if (triggerText) triggerText.textContent = this._options[optIdx]?.label ?? '';
+          this._closeMenu();
+          this._fireChangeEvent();
+        }
+      };
+
+      this._menuMouseoverHandler = (e) => {
+        const item = e.target.closest('.menu-item');
+        if (!item) return;
+        menuItemsContainer.querySelectorAll('.menu-item').forEach((el) => el.classList.remove('hover'));
+        item.classList.add('hover');
+      };
+
+      this._menuMouseleaveHandler = () => {
+        menuItemsContainer.querySelectorAll('.menu-item').forEach((el) => el.classList.remove('hover'));
+      };
+
+      menuItemsContainer.addEventListener('click',      this._menuClickHandler);
+      menuItemsContainer.addEventListener('mouseover',  this._menuMouseoverHandler);
+      menuItemsContainer.addEventListener('mouseleave', this._menuMouseleaveHandler);
+    }
+
+    // ── Delegated listener on .tags-row (stable container) ────────────────────
+    // Handles × button clicks for dynamically re-rendered tag pills.
+    if (tagsContainer) {
+      if (this._tagsClickHandler) {
+        tagsContainer.removeEventListener('click', this._tagsClickHandler);
+      }
+      this._tagsClickHandler = (e) => {
+        const btn = e.target.closest('.tag-remove');
+        if (!btn) return;
+        e.stopPropagation();
+        this._removeTag(Number(btn.closest('.tag').dataset.index));
+      };
+      tagsContainer.addEventListener('click', this._tagsClickHandler);
+    }
+
     // ── Global close-on-outside-click ─────────────────────────────────────────
-    // Remove old listener first to prevent accumulation
     if (this._closeHandler) {
       document.removeEventListener('click', this._closeHandler);
     }
@@ -389,7 +468,7 @@ class DripDropdown extends HTMLElement {
     document.addEventListener('click', this._closeHandler);
   }
 
-  // ── Full render (called once on connect / attribute change) ───────────────────
+  // ── Full render (called once on connect / non-trivial attribute change) ────────
   _render() {
     const label       = this._escapeHtml(this.getAttribute('label')       || '');
     const placeholder = this._escapeHtml(this.getAttribute('placeholder') || 'Select...');
@@ -511,7 +590,7 @@ class DripDropdown extends HTMLElement {
           border-radius: 4px;
         }
 
-        /* ── Search input ─────────────────────────────────────────────────── */
+        /* ── Search input (sibling to listbox, not inside it — ARIA-correct) ─ */
         .search-input {
           width: 100%;
           padding: 12px 16px;
@@ -599,5 +678,5 @@ class DripDropdown extends HTMLElement {
   }
 }
 
-customElements.define('drip-dropdown', DripDropdown);
+customElements.define('cl-dropdown', DripDropdown);
 export default DripDropdown;
