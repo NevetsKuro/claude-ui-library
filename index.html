@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,12 +9,20 @@
   <!-- Design tokens -->
   <link rel="stylesheet" href="./src/tokens/typography.css" />
 
-  <!-- Web component -->
+  <!-- Web components -->
   <script type="module" src="./src/components/DripText.js"></script>
+  <script type="module" src="./src/components/DripButton.js"></script>
+  <script type="module" src="./src/components/DripInput.js"></script>
+  <script type="module" src="./src/components/DripAlert.js"></script>
+  <script type="module" src="./src/components/DripDropdown.js"></script>
 
   <style>
     /* ── Page chrome ─────────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -30,6 +39,7 @@
       align-items: center;
       justify-content: space-between;
     }
+
     .hero__title {
       font-family: var(--font-family-primary);
       font-size: 64px;
@@ -38,6 +48,7 @@
       margin: 0;
       line-height: 1;
     }
+
     .hero__logo {
       font-family: var(--font-family-primary);
       font-size: 32px;
@@ -74,6 +85,7 @@
       padding: 10px 16px;
       margin-bottom: 40px;
     }
+
     .info-banner span {
       font-family: var(--font-family-primary);
       font-size: var(--text-body-small-size);
@@ -86,6 +98,7 @@
       width: 100%;
       border-collapse: collapse;
     }
+
     .type-table thead th {
       font-family: var(--font-family-primary);
       font-size: var(--text-label-size);
@@ -95,22 +108,27 @@
       padding: 8px 12px;
       background: var(--color-wealthy-green-100);
     }
+
     .type-table tbody tr {
       border-bottom: 1px solid #e0e8f0;
     }
+
     .type-table tbody tr:last-child {
       border-bottom: none;
     }
+
     .type-table td {
       padding: 14px 12px;
       vertical-align: middle;
     }
+
     .meta {
       font-family: var(--font-family-primary);
       font-size: var(--text-label-size);
       color: var(--color-noble-blue-500);
       white-space: nowrap;
     }
+
     .badge {
       display: inline-block;
       background: #eef4fc;
@@ -128,16 +146,20 @@
       grid-template-columns: 1fr 1fr;
       gap: 40px;
     }
+
     @media (max-width: 768px) {
-      .platform-grid { grid-template-columns: 1fr; }
+      .platform-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .platform-card {
       background: #fff;
       border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(10,46,87,.12);
+      box-shadow: 0 6px 12px rgba(10, 46, 87, .12);
       padding: 32px;
     }
+
     .platform-card__label {
       font-family: var(--font-family-primary);
       font-size: var(--text-h3-size);
@@ -153,6 +175,7 @@
       padding: 24px;
       overflow-x: auto;
     }
+
     .code-preview pre {
       margin: 0;
       font-family: 'Courier New', monospace;
@@ -160,12 +183,25 @@
       line-height: 1.6;
       color: #e2e8f0;
     }
-    .code-preview .attr  { color: #93c5fd; }
-    .code-preview .val   { color: #86efac; }
-    .code-preview .tag   { color: #f9a8d4; }
-    .code-preview .cmt   { color: #64748b; }
+
+    .code-preview .attr {
+      color: #93c5fd;
+    }
+
+    .code-preview .val {
+      color: #86efac;
+    }
+
+    .code-preview .tag {
+      color: #f9a8d4;
+    }
+
+    .code-preview .cmt {
+      color: #64748b;
+    }
   </style>
 </head>
+
 <body>
 
   <!-- Hero -->
@@ -177,22 +213,22 @@
   <!-- ── Introduction ─────────────────────────────────────────────────────── -->
   <section class="section">
     <h2 class="section-title">Introduction</h2>
-    <drip-text variant="body">
+    <cl-text variant="body">
       Nunito Sans is the primary typeface for Drip Capital. It evokes a contemporary,
       clean and balanced visual identity. Along with being modern and minimalist in
       appearance, the use of Bold and Regular from this font family provides
       high-legibility.
-    </drip-text>
+    </cl-text>
   </section>
 
   <!-- ── Heading Structure ─────────────────────────────────────────────────── -->
   <section class="section">
     <h2 class="section-title">Heading Structure</h2>
 
-    <drip-text variant="body">
+    <cl-text variant="body">
       To enhance our design language consistently across all digital products, our
       curated font sizes range from 44px to 10px to establish harmonious visual hierarchy.
-    </drip-text>
+    </cl-text>
 
     <!-- Desktop scale -->
     <div class="platform-grid" style="margin-top:40px">
@@ -213,15 +249,15 @@
               <td class="meta">Heading 1</td>
               <td class="meta"><span class="badge">Bold</span></td>
               <td class="meta">44px</td>
-              <td><drip-text variant="h1">The seamless trade platform</drip-text></td>
+              <td><cl-text variant="h1">The seamless trade platform</cl-text></td>
             </tr>
             <tr>
               <td class="meta">Heading 2</td>
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">32px</td>
               <td>
-                <drip-text variant="h2" weight="regular">Solution to your</drip-text><br/>
-                <drip-text variant="h2" weight="bold">cashflow needs</drip-text>
+                <cl-text variant="h2" weight="regular">Solution to your</cl-text><br />
+                <cl-text variant="h2" weight="bold">cashflow needs</cl-text>
               </td>
             </tr>
             <tr>
@@ -229,8 +265,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">24px</td>
               <td>
-                <drip-text variant="h3" weight="regular">Formulated to carry out</drip-text><br/>
-                <drip-text variant="h3" weight="bold">effortless global trade</drip-text>
+                <cl-text variant="h3" weight="regular">Formulated to carry out</cl-text><br />
+                <cl-text variant="h3" weight="bold">effortless global trade</cl-text>
               </td>
             </tr>
             <tr>
@@ -238,23 +274,23 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">20px</td>
               <td>
-                <drip-text variant="h4" weight="regular">For your business needs,</drip-text><br/>
-                <drip-text variant="h4" weight="bold">and secure transactions</drip-text>
+                <cl-text variant="h4" weight="regular">For your business needs,</cl-text><br />
+                <cl-text variant="h4" weight="bold">and secure transactions</cl-text>
               </td>
             </tr>
             <tr>
               <td class="meta">Caption</td>
               <td class="meta"><span class="badge">Bold</span></td>
               <td class="meta">18px</td>
-              <td><drip-text variant="caption">Developed with precision</drip-text></td>
+              <td><cl-text variant="caption">Developed with precision</cl-text></td>
             </tr>
             <tr>
               <td class="meta">Body</td>
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">16px</td>
               <td>
-                <drip-text variant="body" weight="regular">Crafted as an epitome</drip-text><br/>
-                <drip-text variant="body" weight="bold">of clean aesthetic design</drip-text>
+                <cl-text variant="body" weight="regular">Crafted as an epitome</cl-text><br />
+                <cl-text variant="body" weight="bold">of clean aesthetic design</cl-text>
               </td>
             </tr>
             <tr>
@@ -262,8 +298,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">14px</td>
               <td>
-                <drip-text variant="label" weight="regular">Utilized by Drip,</drip-text><br/>
-                <drip-text variant="label" weight="bold">assisted for you</drip-text>
+                <cl-text variant="label" weight="regular">Utilized by Drip,</cl-text><br />
+                <cl-text variant="label" weight="bold">assisted for you</cl-text>
               </td>
             </tr>
             <tr>
@@ -271,8 +307,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">12px</td>
               <td>
-                <drip-text variant="body-small" weight="regular">Paper-less, swift</drip-text><br/>
-                <drip-text variant="body-small" weight="bold">and hassle free</drip-text>
+                <cl-text variant="body-small" weight="regular">Paper-less, swift</cl-text><br />
+                <cl-text variant="body-small" weight="bold">and hassle free</cl-text>
               </td>
             </tr>
             <tr>
@@ -280,8 +316,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">10px</td>
               <td>
-                <drip-text variant="validation" weight="regular">to global trade finance</drip-text><br/>
-                <drip-text variant="validation" weight="bold">For an easy access</drip-text>
+                <cl-text variant="validation" weight="regular">to global trade finance</cl-text><br />
+                <cl-text variant="validation" weight="bold">For an easy access</cl-text>
               </td>
             </tr>
           </tbody>
@@ -306,15 +342,15 @@
               <td class="meta">Heading 1</td>
               <td class="meta"><span class="badge">Bold</span></td>
               <td class="meta">32px</td>
-              <td><drip-text variant="h1">The seamless trade platform</drip-text></td>
+              <td><cl-text variant="h1">The seamless trade platform</cl-text></td>
             </tr>
             <tr>
               <td class="meta">Heading 2</td>
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">28px</td>
               <td>
-                <drip-text variant="h2" weight="regular">Solution to your</drip-text><br/>
-                <drip-text variant="h2" weight="bold">cashflow needs</drip-text>
+                <cl-text variant="h2" weight="regular">Solution to your</cl-text><br />
+                <cl-text variant="h2" weight="bold">cashflow needs</cl-text>
               </td>
             </tr>
             <tr>
@@ -322,8 +358,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">22px</td>
               <td>
-                <drip-text variant="h3" weight="regular">Formulated to carry out</drip-text><br/>
-                <drip-text variant="h3" weight="bold">effortless global trade</drip-text>
+                <cl-text variant="h3" weight="regular">Formulated to carry out</cl-text><br />
+                <cl-text variant="h3" weight="bold">effortless global trade</cl-text>
               </td>
             </tr>
             <tr>
@@ -331,23 +367,23 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">20px</td>
               <td>
-                <drip-text variant="h4" weight="regular">For your business needs</drip-text><br/>
-                <drip-text variant="h4" weight="bold">and secure transactions</drip-text>
+                <cl-text variant="h4" weight="regular">For your business needs</cl-text><br />
+                <cl-text variant="h4" weight="bold">and secure transactions</cl-text>
               </td>
             </tr>
             <tr>
               <td class="meta">Caption</td>
               <td class="meta"><span class="badge">Bold</span></td>
               <td class="meta">18px</td>
-              <td><drip-text variant="caption">Developed with precision</drip-text></td>
+              <td><cl-text variant="caption">Developed with precision</cl-text></td>
             </tr>
             <tr>
               <td class="meta">Body</td>
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">16px</td>
               <td>
-                <drip-text variant="body" weight="regular">Crafted as an epitome</drip-text><br/>
-                <drip-text variant="body" weight="bold">of clean aesthetic design</drip-text>
+                <cl-text variant="body" weight="regular">Crafted as an epitome</cl-text><br />
+                <cl-text variant="body" weight="bold">of clean aesthetic design</cl-text>
               </td>
             </tr>
             <tr>
@@ -355,8 +391,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">14px</td>
               <td>
-                <drip-text variant="label" weight="regular">Utilized by Drip</drip-text><br/>
-                <drip-text variant="label" weight="bold">assisted for you</drip-text>
+                <cl-text variant="label" weight="regular">Utilized by Drip</cl-text><br />
+                <cl-text variant="label" weight="bold">assisted for you</cl-text>
               </td>
             </tr>
             <tr>
@@ -364,8 +400,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">12px</td>
               <td>
-                <drip-text variant="body-small" weight="regular">Paper-less, swift</drip-text><br/>
-                <drip-text variant="body-small" weight="bold">and hassle free</drip-text>
+                <cl-text variant="body-small" weight="regular">Paper-less, swift</cl-text><br />
+                <cl-text variant="body-small" weight="bold">and hassle free</cl-text>
               </td>
             </tr>
             <tr>
@@ -373,8 +409,8 @@
               <td class="meta"><span class="badge">Regular</span><span class="badge">Bold</span></td>
               <td class="meta">10px</td>
               <td>
-                <drip-text variant="validation" weight="regular">to global trade finance</drip-text><br/>
-                <drip-text variant="validation" weight="bold">For an easy access</drip-text>
+                <cl-text variant="validation" weight="regular">to global trade finance</cl-text><br />
+                <cl-text variant="validation" weight="bold">For an easy access</cl-text>
               </td>
             </tr>
           </tbody>
@@ -388,7 +424,7 @@
     <h2 class="section-title">Usage Examples</h2>
 
     <div class="info-banner">
-      <span>ℹ️  Load the component once, then use &lt;drip-text&gt; anywhere in your HTML.</span>
+      <span>ℹ️ Load the component once, then use &lt;drip-text&gt; anywhere in your HTML.</span>
     </div>
 
     <div class="code-preview">
@@ -423,8 +459,8 @@
   <section class="section">
     <h2 class="section-title">Figma Code Connect</h2>
     <div class="info-banner">
-      <span>📎  The file <code>src/figma/DripText.figma.js</code> maps this web component back to
-      the Figma typography node so designers see live code snippets in Dev Mode.</span>
+      <span>📎 The file <code>src/figma/DripText.figma.js</code> maps this web component back to
+        the Figma typography node so designers see live code snippets in Dev Mode.</span>
     </div>
 
     <div class="code-preview">
@@ -451,4 +487,5 @@
   </footer>
 
 </body>
+
 </html>

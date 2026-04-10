@@ -229,5 +229,5 @@ class DripInput extends HTMLElement {
   }
 }
 
-customElements.define('drip-input', DripInput);
+customElements.define('cl-input', DripInput);
 export default DripInput;
